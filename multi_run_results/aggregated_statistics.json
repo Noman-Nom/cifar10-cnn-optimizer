@@ -1,0 +1,85 @@
+{
+  "random_search": {
+    "test_accuracy": {
+      "mean": 90.63333333333333,
+      "std": 0.10208928554075869,
+      "min": 90.49,
+      "max": 90.72,
+      "all_values": [
+        90.69,
+        90.49,
+        90.72
+      ]
+    },
+    "val_accuracy": {
+      "mean": 89.41333333333334,
+      "std": 0.08993825042154906,
+      "min": 89.34,
+      "max": 89.54
+    },
+    "n_evaluations": {
+      "mean": 15.0,
+      "std": 0.0
+    },
+    "n_runs": 3,
+    "avg_best_config": {
+      "learning_rate": 0.00039987928942942635,
+      "batch_size": 53.0,
+      "conv_channels_base": 116.0,
+      "num_conv_blocks": 4.0,
+      "fc_hidden": 370.0,
+      "dropout": 0.3267538637998689,
+      "weight_decay": 0.00012414572254600123
+    }
+  },
+  "pso": {
+    "test_accuracy": {
+      "mean": 90.37,
+      "std": 0.2899425230397717,
+      "min": 90.02,
+      "max": 90.73,
+      "all_values": [
+        90.36,
+        90.02,
+        90.73
+      ]
+    },
+    "val_accuracy": {
+      "mean": 88.3,
+      "std": 0.2438578821089604,
+      "min": 87.96,
+      "max": 88.52
+    },
+    "n_evaluations": {
+      "mean": 30.0,
+      "std": 0.0
+    },
+    "n_runs": 3,
+    "avg_best_config": {
+      "learning_rate": 0.0008971221559925824,
+      "batch_size": 32.0,
+      "conv_channels_base": 77.66666666666667,
+      "num_conv_blocks": 4.0,
+      "fc_hidden": 456.0,
+      "dropout": 0.3564671632846336,
+      "weight_decay": 5.9458620536076536e-05
+    }
+  },
+  "statistical_tests": {
+    "wilcoxon": {
+      "statistic": 1.0,
+      "p_value": 0.5,
+      "significant": false,
+      "test_type": "paired"
+    },
+    "ttest_paired": {
+      "statistic": 1.8477320654136682,
+      "p_value": 0.20589979861649954,
+      "significant": false
+    },
+    "effect_size": {
+      "cohens_d": 1.2115196524601253,
+      "interpretation": "large"
+    }
+  }
+}

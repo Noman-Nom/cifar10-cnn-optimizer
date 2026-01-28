@@ -1,0 +1,11 @@
+Metric,Random Search,PSO
+Test Accuracy Mean (%),90.63,90.37
+Test Accuracy Std (%),0.10,0.29
+Test Accuracy Min (%),90.49,90.02
+Test Accuracy Max (%),90.72,90.73
+Best Val Acc Mean (%),89.41,88.30
+Best Val Acc Std (%),0.09,0.24
+Avg Evaluations,15,30
+Wilcoxon p-value,-,0.5000
+t-test p-value,-,0.2059
+Winner (p<0.05),-,-
