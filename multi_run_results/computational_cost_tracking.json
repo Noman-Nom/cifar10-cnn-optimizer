@@ -1,0 +1,49 @@
+{
+  "start_time": "2026-01-27T23:40:24.665355",
+  "runs": [
+    {
+      "run_number": 1,
+      "seed": 42,
+      "start_time": "2026-01-27T23:40:24.665430",
+      "status": "completed",
+      "exit_code": 0,
+      "end_time": "2026-01-28T05:58:47.812084",
+      "wall_clock_hours": 6.306429624226358,
+      "wall_clock_formatted": "6:18:23",
+      "gpu_hours": 6.306429624226358
+    },
+    {
+      "run_number": 2,
+      "seed": 123,
+      "start_time": "2026-01-28T05:58:52.817025",
+      "status": "completed",
+      "exit_code": 0,
+      "end_time": "2026-01-28T11:54:38.180254",
+      "wall_clock_hours": 5.929267559515106,
+      "wall_clock_formatted": "5:55:45",
+      "gpu_hours": 5.929267559515106
+    },
+    {
+      "run_number": 3,
+      "seed": 999,
+      "start_time": "2026-01-28T11:54:43.185939",
+      "status": "completed",
+      "exit_code": 0,
+      "end_time": "2026-01-28T17:39:25.042223",
+      "wall_clock_hours": 5.744960072437922,
+      "wall_clock_formatted": "5:44:41",
+      "gpu_hours": 5.744960072437922
+    }
+  ],
+  "total_wall_clock_hours": 17.980657256179388,
+  "total_gpu_hours": 17.980657256179388,
+  "device": {
+    "cuda_available": true,
+    "device_count": 1,
+    "device_name": "Quadro T2000 with Max-Q Design",
+    "device_capability": [
+      7,
+      5
+    ]
+  }
+}

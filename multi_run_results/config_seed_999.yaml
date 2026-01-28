@@ -1,0 +1,78 @@
+dataset:
+  augment: true
+  data_dir: ./data
+  name: CIFAR10
+  normalize: true
+  test_split: 0.1
+  val_split: 0.1
+experiment:
+  base_seed: 999
+  device: cuda
+  n_runs: 1
+  num_workers: 8
+  results_dir: ./experiments/results
+  save_models: true
+  save_plots: true
+model:
+  input_shape:
+  - 3
+  - 32
+  - 32
+  type: CNN
+optimizers:
+  pso:
+    c1: 1.5
+    c2: 1.5
+    enabled: true
+    n_iterations: 5
+    population_size: 6
+    w: 0.7
+  random_search:
+    enabled: true
+    n_iterations: 15
+pso_training:
+  early_stopping_patience: 8
+  max_epochs: 25
+retraining:
+  early_stopping_patience: 30
+  max_epochs: 200
+search_space:
+  batch_size:
+    max: 256
+    min: 32
+    scale: log
+    type: int
+  conv_channels_base:
+    max: 128
+    min: 32
+    scale: log
+    type: int
+  dropout:
+    max: 0.5
+    min: 0.1
+    scale: linear
+    type: float
+  fc_hidden:
+    max: 512
+    min: 64
+    scale: linear
+    type: int
+  learning_rate:
+    max: 0.01
+    min: 0.0001
+    scale: log
+    type: float
+  num_conv_blocks:
+    max: 4
+    min: 2
+    scale: linear
+    type: int
+  weight_decay:
+    max: 0.001
+    min: 1.0e-05
+    scale: log
+    type: float
+training:
+  early_stopping_patience: 10
+  max_epochs: 30
+  optimizer_type: adam

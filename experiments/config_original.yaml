@@ -1,0 +1,91 @@
+experiment:
+  n_runs: 1  # Reduced from 3 - run once first, add more if needed
+  device: "cuda"  # Use GPU!
+  results_dir: "./experiments/results"
+  base_seed: 42
+  num_workers: 8  # More workers for CIFAR-10 (larger dataset)
+  save_models: true
+  save_plots: true
+
+dataset:
+  name: "CIFAR10"
+  data_dir: "./data"
+  val_split: 0.1
+  test_split: 0.1
+  # CIFAR-10 specific
+  augment: true
+  normalize: true
+
+model:
+  type: "CNN"
+  input_shape: [3, 32, 32]  # CIFAR-10: RGB, 32x32
+
+optimizers:
+  random_search:
+    enabled: true
+    n_iterations: 15  # Reduced: 15 × 30 = 450 epochs
+  
+  pso:
+    enabled: true
+    n_iterations: 5  # Reduced: 5 × 6 × 25 = 750 epochs
+    population_size: 6  # Reduced from 10
+    w: 0.7
+    c1: 1.5
+    c2: 1.5
+
+training:
+  max_epochs: 30  # Reduced from 200 - enough for exploration
+  early_stopping_patience: 10
+  optimizer_type: "adam"
+
+pso_training:
+  max_epochs: 25  # Reduced from 50
+  early_stopping_patience: 8
+
+retraining:
+  max_epochs: 200  # Reduced from 15000 - still gets good results
+  early_stopping_patience: 30
+
+search_space:
+  learning_rate:
+    type: "float"
+    min: 0.0001
+    max: 0.01
+    scale: "log"
+  
+  batch_size:
+    type: "int"
+    min: 32
+    max: 256
+    scale: "log"
+  
+  conv_channels_base:
+    type: "int"
+    min: 32
+    max: 128
+    scale: "log"
+  
+  num_conv_blocks:
+    type: "int"
+    min: 2
+    max: 4
+    scale: "linear"
+  
+  fc_hidden:
+    type: "int"
+    min: 64
+    max: 512
+    scale: "linear"
+  
+  dropout:
+    type: "float"
+    min: 0.1
+    max: 0.5
+    scale: "linear"
+  
+  weight_decay:
+    type: "float"
+    min: 0.00001
+    max: 0.001
+    scale: "log"
+

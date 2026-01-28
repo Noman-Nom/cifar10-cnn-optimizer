@@ -1,0 +1,21 @@
+name: cifar10-hpo
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch
+  - torchvision
+  - pytorch-cuda=11.8  # or 12.1 depending on your CUDA version
+  - numpy
+  - matplotlib
+  - seaborn
+  - scipy
+  - scikit-learn
+  - pandas
+  - pip
+  - pip:
+    - tqdm
+
