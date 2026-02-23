@@ -23,7 +23,7 @@ Run the setup script:
 
 3. **Install additional requirements:**
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirementsss.txt
    ```
 
 ### Option 2: Manual conda installation
