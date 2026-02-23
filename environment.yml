@@ -8,7 +8,7 @@ dependencies:
   - python=3.10
   - pytorch
   - torchvision
-  - pytorch-cuda=11.8  # or 12.1 depending on your CUDA version
+  - pytorch-cuda=12.1
   - numpy
   - matplotlib
   - seaborn
