@@ -1,5 +1,5 @@
 experiment:
-  n_runs: 1  # Reduced from 3 - run once first, add more if needed
+  n_runs: 3  # Increase to 3 runs for a full trial
   device: "cuda"  # Use GPU!
   results_dir: "./experiments/results"
   base_seed: 42
@@ -22,11 +22,15 @@ model:
 
 optimizers:
   random_search:
-    enabled: true
+    enabled: false
     n_iterations: 15  # Reduced: 15 × 30 = 450 epochs
   
-  pso:
+  bo:
     enabled: true
+    n_iterations: 15  # 15 evaluations to match Random Search budget
+
+  pso:
+    enabled: false
     n_iterations: 5  # Reduced: 5 × 6 × 25 = 750 epochs
     population_size: 6  # Reduced from 10
     w: 0.7
@@ -41,6 +45,10 @@ training:
 pso_training:
   max_epochs: 25  # Reduced from 50
   early_stopping_patience: 8
+
+bo_training:
+  max_epochs: 30  # Identical to random search for fair baseline
+  early_stopping_patience: 10
 
 retraining:
   max_epochs: 200  # Reduced from 15000 - still gets good results

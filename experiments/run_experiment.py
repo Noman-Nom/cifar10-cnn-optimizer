@@ -23,6 +23,7 @@ from models.cnn import create_cnn_from_config
 from utils.trainer import ModelTrainer, EarlyStopping
 from optimizers.random_search import RandomSearch
 from optimizers.pso import ParticleSwarmOptimizer
+from optimizers.bayesian_optimization import BayesianOptimization
 
 
 class HyperparameterExperiment:
@@ -106,6 +107,9 @@ class HyperparameterExperiment:
         if optimizer_name == 'random_search':
             max_epochs = self.config['training']['max_epochs']
             patience = self.config['training']['early_stopping_patience']
+        elif optimizer_name == 'bo':
+            max_epochs = self.config['bo_training']['max_epochs']
+            patience = self.config['bo_training']['early_stopping_patience']
         else:  # PSO
             max_epochs = self.config['pso_training']['max_epochs']
             patience = self.config['pso_training']['early_stopping_patience']
@@ -187,6 +191,13 @@ class HyperparameterExperiment:
         if optimizer_name == 'random_search':
             opt_config = self.config['optimizers']['random_search']
             optimizer = RandomSearch(
+                search_space=search_space,
+                seed=base_seed
+            )
+            n_iterations = opt_config['n_iterations']
+        elif optimizer_name == 'bo':
+            opt_config = self.config['optimizers']['bo']
+            optimizer = BayesianOptimization(
                 search_space=search_space,
                 seed=base_seed
             )
@@ -328,6 +339,7 @@ class HyperparameterExperiment:
         
         all_results = {
             'random_search': [],
+            'bo': [],
             'pso': []
         }
         
@@ -354,6 +366,28 @@ class HyperparameterExperiment:
                 
                 rs_results['retrain_results'] = retrain_results
                 all_results['random_search'].append(rs_results)
+            
+            # BO
+            if self.config['optimizers'].get('bo', {}).get('enabled', False):
+                bo_dir = self.run_dir / 'bo' / f'run_{seed}'
+                bo_dir.mkdir(parents=True, exist_ok=True)
+                
+                bo_results = self.run_optimizer('bo', seed)
+                
+                # Save optimization history
+                with open(bo_dir / 'optimization_history.json', 'w') as f:
+                    json.dump(bo_results['history'], f, indent=2)
+                
+                # Retrain best model
+                retrain_results = self.retrain_best_model(
+                    bo_results['best_config'],
+                    'bo',
+                    seed,
+                    bo_dir
+                )
+                
+                bo_results['retrain_results'] = retrain_results
+                all_results['bo'].append(bo_results)
             
             # PSO
             if self.config['optimizers']['pso']['enabled']:
@@ -382,6 +416,10 @@ class HyperparameterExperiment:
             'random_search': {
                 'test_accuracies': [r['retrain_results']['test_accuracy'] for r in all_results['random_search']],
                 'best_configs': [r['best_config'] for r in all_results['random_search']]
+            },
+            'bo': {
+                'test_accuracies': [r['retrain_results']['test_accuracy'] for r in all_results['bo'] if 'retrain_results' in r],
+                'best_configs': [r['best_config'] for r in all_results['bo']]
             },
             'pso': {
                 'test_accuracies': [r['retrain_results']['test_accuracy'] for r in all_results['pso']],
