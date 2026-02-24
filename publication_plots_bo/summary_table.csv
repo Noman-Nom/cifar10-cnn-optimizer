@@ -1,0 +1,7 @@
+Metric,Random Search,PSO,Bayesian Opt.
+Mean Test Acc (%),90.63,90.37,89.65
+Std Test Acc (%),0.10,0.29,0.79
+Best Test Acc (%),90.72,90.73,90.43
+Mean Val Acc (%),89.41,88.30,88.27
+# Evaluations,15,30,15
+Runs,3,3,3

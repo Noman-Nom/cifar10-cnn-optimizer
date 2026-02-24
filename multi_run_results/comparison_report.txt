@@ -6,21 +6,23 @@ HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
 --------------------------------------------------------------------------------
 Random Search Test Accuracy: 90.63% ± 0.10%
 PSO Test Accuracy:           90.37% ± 0.29%
+BO Test Accuracy:            89.65% ± 0.79%
 
-Difference (RS - PSO):       +0.26%
+Differences:
+RS - PSO: +0.26%
+BO - RS:  -0.98%
+BO - PSO: -0.72%
+
 Winner: Random Search
 
 2. STATISTICAL SIGNIFICANCE
 --------------------------------------------------------------------------------
-Wilcoxon Test: p = 0.5000 (NOT significant)
-Paired t-test: p = 0.2059 (NOT significant)
-
-Effect Size (Cohen's d): 1.2115 (large)
 
 3. COMPUTATIONAL EFFICIENCY
 --------------------------------------------------------------------------------
 Random Search Avg Evaluations: 15.0 ± 0.0
 PSO Avg Evaluations:           30.0 ± 0.0
+BO Avg Evaluations:            15.0 ± 0.0
 
 4. AVERAGE BEST CONFIGURATIONS
 --------------------------------------------------------------------------------
@@ -42,5 +44,14 @@ PSO:
   fc_hidden: 456.000000
   dropout: 0.356467
   weight_decay: 0.000059
+
+Bayesian Optimization:
+  learning_rate: 0.001729
+  batch_size: 73.666667
+  conv_channels_base: 75.666667
+  num_conv_blocks: 4.000000
+  fc_hidden: 372.666667
+  dropout: 0.165313
+  weight_decay: 0.000067
 
 ================================================================================

@@ -36,10 +36,13 @@ class MultiRunAggregator:
         base_results = Path('experiments/results')
         
         if base_results.exists():
-            experiment_dirs = sorted([d for d in base_results.iterdir() 
-                                    if d.is_dir() and d.name.startswith('CIFAR10_CNN_')])
+            all_dirs = sorted([d for d in base_results.iterdir() 
+                               if d.is_dir() and d.name.startswith('CIFAR10_CNN_')])
+            # Only include dirs that have BOTH random_search and pso sub-dirs (full experiments)
+            experiment_dirs = [d for d in all_dirs 
+                               if (d / 'random_search').exists() and (d / 'pso').exists()]
             
-            print(f"\n📂 Found {len(experiment_dirs)} experiment directories:")
+            print(f"\n📂 Found {len(experiment_dirs)} full experiment directories:")
             for i, exp_dir in enumerate(experiment_dirs):
                 print(f"   {i+1}. {exp_dir.name}")
                 self.experiment_dirs.append(exp_dir)
@@ -85,6 +88,7 @@ class MultiRunAggregator:
                 
                 rs_history = []
                 pso_history = []
+                bo_history = []
                 
                 for rs_run in rs_runs:
                     opt_hist_path = rs_run / 'optimization_history.json'
@@ -97,18 +101,27 @@ class MultiRunAggregator:
                     if opt_hist_path.exists():
                         with open(opt_hist_path, 'r') as f:
                             pso_history.extend(json.load(f))
+                            
+                bo_runs = list((exp_dir / 'bo').glob('run_*'))
+                for bo_run in bo_runs:
+                    opt_hist_path = bo_run / 'optimization_history.json'
+                    if opt_hist_path.exists():
+                        with open(opt_hist_path, 'r') as f:
+                            bo_history.extend(json.load(f))
                 
                 self.all_data.append({
                     'exp_dir': exp_dir,
                     'seed': seed,
                     'summary': summary,
                     'rs_history': rs_history,
-                    'pso_history': pso_history
+                    'pso_history': pso_history,
+                    'bo_history': bo_history
                 })
                 
                 print(f"   ✅ Loaded successfully")
                 print(f"      - RS trials: {len(rs_history)}")
                 print(f"      - PSO evaluations: {len(pso_history)}")
+                print(f"      - BO evaluations: {len(bo_history)}")
                 
             except Exception as e:
                 print(f"   ❌ Error loading: {e}")
@@ -129,15 +142,19 @@ class MultiRunAggregator:
         # Extract metrics
         rs_test_accs = []
         pso_test_accs = []
+        bo_test_accs = []
         
         rs_val_accs = []
         pso_val_accs = []
+        bo_val_accs = []
         
         rs_n_evals = []
         pso_n_evals = []
+        bo_n_evals = []
         
         rs_best_configs = []
         pso_best_configs = []
+        bo_best_configs = []
         
         for data in self.all_data:
             summary = data['summary']
@@ -145,6 +162,7 @@ class MultiRunAggregator:
             # Test accuracies
             rs_test_accs.extend(summary.get('random_search', {}).get('test_accuracies', []))
             pso_test_accs.extend(summary.get('pso', {}).get('test_accuracies', []))
+            bo_test_accs.extend(summary.get('bo', {}).get('test_accuracies', []))
             
             # Validation accuracies (best found)
             if data['rs_history']:
@@ -158,6 +176,12 @@ class MultiRunAggregator:
                 pso_val_accs.append(pso_best['score'])
                 pso_best_configs.append(pso_best['config'])
                 pso_n_evals.append(len(data['pso_history']))
+                
+            if data['bo_history']:
+                bo_best = max(data['bo_history'], key=lambda x: x['score'])
+                bo_val_accs.append(bo_best['score'])
+                bo_best_configs.append(bo_best['config'])
+                bo_n_evals.append(len(data['bo_history']))
         
         # Compute statistics
         stats_dict = {
@@ -200,13 +224,33 @@ class MultiRunAggregator:
                     'std': float(np.std(pso_n_evals)) if pso_n_evals else 0,
                 },
                 'n_runs': len(pso_test_accs)
+            },
+            'bo': {
+                'test_accuracy': {
+                    'mean': float(np.mean(bo_test_accs)) if bo_test_accs else 0,
+                    'std': float(np.std(bo_test_accs)) if bo_test_accs else 0,
+                    'min': float(np.min(bo_test_accs)) if bo_test_accs else 0,
+                    'max': float(np.max(bo_test_accs)) if bo_test_accs else 0,
+                    'all_values': bo_test_accs
+                },
+                'val_accuracy': {
+                    'mean': float(np.mean(bo_val_accs)) if bo_val_accs else 0,
+                    'std': float(np.std(bo_val_accs)) if bo_val_accs else 0,
+                    'min': float(np.min(bo_val_accs)) if bo_val_accs else 0,
+                    'max': float(np.max(bo_val_accs)) if bo_val_accs else 0,
+                },
+                'n_evaluations': {
+                    'mean': float(np.mean(bo_n_evals)) if bo_n_evals else 0,
+                    'std': float(np.std(bo_n_evals)) if bo_n_evals else 0,
+                },
+                'n_runs': len(bo_test_accs)
             }
         }
         
         # Statistical tests
-        if rs_test_accs and pso_test_accs:
+        if rs_test_accs and pso_test_accs and bo_test_accs:
             stats_dict['statistical_tests'] = self.perform_statistical_tests(
-                rs_test_accs, pso_test_accs
+                rs_test_accs, pso_test_accs, bo_test_accs
             )
         
         # Average best configurations
@@ -221,76 +265,60 @@ class MultiRunAggregator:
                 k: float(np.mean([c[k] for c in pso_best_configs]))
                 for k in pso_best_configs[0].keys()
             }
+            
+        if bo_best_configs:
+            stats_dict['bo']['avg_best_config'] = {
+                k: float(np.mean([c[k] for c in bo_best_configs]))
+                for k in bo_best_configs[0].keys()
+            }
         
         return stats_dict
     
-    def perform_statistical_tests(self, rs_accs, pso_accs):
-        """Perform statistical significance tests"""
+    def perform_statistical_tests(self, rs_accs, pso_accs, bo_accs=None):
+        """Perform statistical significance tests between all method pairs"""
         print("\n📊 Performing statistical tests...")
         
         tests = {}
         
-        # Wilcoxon signed-rank test (if paired)
-        if len(rs_accs) == len(pso_accs):
-            try:
-                stat, p_value = wilcoxon(rs_accs, pso_accs)
-                tests['wilcoxon'] = {
-                    'statistic': float(stat),
-                    'p_value': float(p_value),
-                    'significant': bool(p_value < 0.05),
-                    'test_type': 'paired'
-                }
-                print(f"   Wilcoxon Test: statistic={stat:.4f}, p={p_value:.4f}")
-            except Exception as e:
-                print(f"   ⚠️  Wilcoxon test failed: {e}")
-        else:
-            # Mann-Whitney U test (unpaired)
-            try:
-                stat, p_value = mannwhitneyu(rs_accs, pso_accs)
-                tests['mannwhitneyu'] = {
-                    'statistic': float(stat),
-                    'p_value': float(p_value),
-                    'significant': bool(p_value < 0.05),
-                    'test_type': 'unpaired'
-                }
-                print(f"   Mann-Whitney U Test: statistic={stat:.4f}, p={p_value:.4f}")
-            except Exception as e:
-                print(f"   ⚠️  Mann-Whitney test failed: {e}")
+        def run_pairwise(name_a, accs_a, name_b, accs_b):
+            pair_tests = {}
+            key = f"{name_a}_vs_{name_b}"
+            print(f"\n   --- {name_a} vs {name_b} ---")
+            if len(accs_a) == len(accs_b):
+                try:
+                    stat, p = wilcoxon(accs_a, accs_b)
+                    pair_tests['wilcoxon'] = {'statistic': float(stat), 'p_value': float(p), 'significant': bool(p < 0.05)}
+                    print(f"   Wilcoxon: p={p:.4f}")
+                except Exception as e:
+                    print(f"   ⚠️  Wilcoxon failed: {e}")
+                try:
+                    stat, p = ttest_rel(accs_a, accs_b)
+                    pair_tests['ttest'] = {'statistic': float(stat), 'p_value': float(p), 'significant': bool(p < 0.05)}
+                    print(f"   t-test (paired): p={p:.4f}")
+                except Exception as e:
+                    print(f"   ⚠️  t-test failed: {e}")
+            else:
+                try:
+                    stat, p = mannwhitneyu(accs_a, accs_b)
+                    pair_tests['mannwhitneyu'] = {'statistic': float(stat), 'p_value': float(p), 'significant': bool(p < 0.05)}
+                    print(f"   Mann-Whitney U: p={p:.4f}")
+                except Exception as e:
+                    print(f"   ⚠️  Mann-Whitney failed: {e}")
+
+            mean_diff = np.mean(accs_a) - np.mean(accs_b)
+            pooled_std = np.sqrt((np.std(accs_a)**2 + np.std(accs_b)**2) / 2)
+            d = mean_diff / pooled_std if pooled_std > 0 else 0
+            pair_tests['effect_size'] = {'cohens_d': float(d), 'interpretation': self.interpret_cohens_d(d)}
+            print(f"   Cohen's d: {d:.4f} ({pair_tests['effect_size']['interpretation']})")
+            return key, pair_tests
         
-        # t-test
-        if len(rs_accs) == len(pso_accs):
-            try:
-                stat, p_value = ttest_rel(rs_accs, pso_accs)
-                tests['ttest_paired'] = {
-                    'statistic': float(stat),
-                    'p_value': float(p_value),
-                    'significant': bool(p_value < 0.05)
-                }
-                print(f"   Paired t-test: statistic={stat:.4f}, p={p_value:.4f}")
-            except Exception as e:
-                print(f"   ⚠️  Paired t-test failed: {e}")
-        else:
-            try:
-                stat, p_value = ttest_ind(rs_accs, pso_accs)
-                tests['ttest_independent'] = {
-                    'statistic': float(stat),
-                    'p_value': float(p_value),
-                    'significant': bool(p_value < 0.05)
-                }
-                print(f"   Independent t-test: statistic={stat:.4f}, p={p_value:.4f}")
-            except Exception as e:
-                print(f"   ⚠️  Independent t-test failed: {e}")
-        
-        # Effect size (Cohen's d)
-        mean_diff = np.mean(rs_accs) - np.mean(pso_accs)
-        pooled_std = np.sqrt((np.std(rs_accs)**2 + np.std(pso_accs)**2) / 2)
-        cohens_d = mean_diff / pooled_std if pooled_std > 0 else 0
-        
-        tests['effect_size'] = {
-            'cohens_d': float(cohens_d),
-            'interpretation': self.interpret_cohens_d(cohens_d)
-        }
-        print(f"   Cohen's d: {cohens_d:.4f} ({tests['effect_size']['interpretation']})")
+        k, v = run_pairwise('random_search', rs_accs, 'pso', pso_accs)
+        tests[k] = v
+        if bo_accs:
+            k, v = run_pairwise('bo', bo_accs, 'random_search', rs_accs)
+            tests[k] = v
+            k, v = run_pairwise('bo', bo_accs, 'pso', pso_accs)
+            tests[k] = v
         
         return tests
     
@@ -331,6 +359,7 @@ class MultiRunAggregator:
         """Create summary statistics table"""
         rs = stats_dict['random_search']
         pso = stats_dict['pso']
+        bo = stats_dict['bo']
         
         data = {
             'Metric': [
@@ -359,6 +388,15 @@ class MultiRunAggregator:
                 f"{pso['val_accuracy']['std']:.2f}",
                 f"{pso['n_evaluations']['mean']:.1f} ± {pso['n_evaluations']['std']:.1f}",
                 f"{pso['n_runs']}"
+            ],
+            'Bayesian Optimization': [
+                f"{bo['test_accuracy']['mean']:.2f}",
+                f"{bo['test_accuracy']['std']:.2f}",
+                f"{bo['test_accuracy']['min']:.2f} - {bo['test_accuracy']['max']:.2f}",
+                f"{bo['val_accuracy']['mean']:.2f}",
+                f"{bo['val_accuracy']['std']:.2f}",
+                f"{bo['n_evaluations']['mean']:.1f} ± {bo['n_evaluations']['std']:.1f}",
+                f"{bo['n_runs']}"
             ]
         }
         
@@ -391,6 +429,7 @@ class MultiRunAggregator:
         
         rs = stats_dict['random_search']
         pso = stats_dict['pso']
+        bo = stats_dict['bo']
         
         with open(report_path, 'w') as f:
             f.write("="*80 + "\n")
@@ -402,16 +441,24 @@ class MultiRunAggregator:
             f.write("-" * 80 + "\n")
             f.write(f"Random Search Test Accuracy: {rs['test_accuracy']['mean']:.2f}% ± {rs['test_accuracy']['std']:.2f}%\n")
             f.write(f"PSO Test Accuracy:           {pso['test_accuracy']['mean']:.2f}% ± {pso['test_accuracy']['std']:.2f}%\n")
+            f.write(f"BO Test Accuracy:            {bo['test_accuracy']['mean']:.2f}% ± {bo['test_accuracy']['std']:.2f}%\n")
             
-            diff = rs['test_accuracy']['mean'] - pso['test_accuracy']['mean']
-            f.write(f"\nDifference (RS - PSO):       {diff:+.2f}%\n")
+            diff_rs_pso = rs['test_accuracy']['mean'] - pso['test_accuracy']['mean']
+            diff_bo_rs = bo['test_accuracy']['mean'] - rs['test_accuracy']['mean']
+            diff_bo_pso = bo['test_accuracy']['mean'] - pso['test_accuracy']['mean']
             
-            if diff > 0:
-                f.write("Winner: Random Search\n")
-            elif diff < 0:
-                f.write("Winner: PSO\n")
+            f.write(f"\nDifferences:\n")
+            f.write(f"RS - PSO: {diff_rs_pso:+.2f}%\n")
+            f.write(f"BO - RS:  {diff_bo_rs:+.2f}%\n")
+            f.write(f"BO - PSO: {diff_bo_pso:+.2f}%\n")
+            
+            best_val = max(rs['test_accuracy']['mean'], pso['test_accuracy']['mean'], bo['test_accuracy']['mean'])
+            if best_val == bo['test_accuracy']['mean']:
+                f.write("\nWinner: Bayesian Optimization\n")
+            elif best_val == rs['test_accuracy']['mean']:
+                f.write("\nWinner: Random Search\n")
             else:
-                f.write("Winner: Tie\n")
+                f.write("\nWinner: PSO\n")
             
             # Statistical significance
             if 'statistical_tests' in stats_dict:
@@ -450,6 +497,7 @@ class MultiRunAggregator:
             f.write("-" * 80 + "\n")
             f.write(f"Random Search Avg Evaluations: {rs['n_evaluations']['mean']:.1f} ± {rs['n_evaluations']['std']:.1f}\n")
             f.write(f"PSO Avg Evaluations:           {pso['n_evaluations']['mean']:.1f} ± {pso['n_evaluations']['std']:.1f}\n")
+            f.write(f"BO Avg Evaluations:            {bo['n_evaluations']['mean']:.1f} ± {bo['n_evaluations']['std']:.1f}\n")
             
             # Best configurations
             if 'avg_best_config' in rs:
@@ -461,6 +509,10 @@ class MultiRunAggregator:
                 
                 f.write("\nPSO:\n")
                 for k, v in pso['avg_best_config'].items():
+                    f.write(f"  {k}: {v:.6f}\n")
+                    
+                f.write("\nBayesian Optimization:\n")
+                for k, v in bo['avg_best_config'].items():
                     f.write(f"  {k}: {v:.6f}\n")
             
             f.write("\n" + "="*80 + "\n")

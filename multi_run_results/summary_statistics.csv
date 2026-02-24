@@ -1,8 +1,8 @@
-Metric,Random Search,PSO
-Test Accuracy Mean (%),90.63,90.37
-Test Accuracy Std (%),0.10,0.29
-Test Accuracy Range,90.49 - 90.72,90.02 - 90.73
-Val Accuracy Mean (%),89.41,88.30
-Val Accuracy Std (%),0.09,0.24
-Avg Evaluations,15.0 ± 0.0,30.0 ± 0.0
-Number of Runs,3,3
+Metric,Random Search,PSO,Bayesian Optimization
+Test Accuracy Mean (%),90.63,90.37,89.65
+Test Accuracy Std (%),0.10,0.29,0.79
+Test Accuracy Range,90.49 - 90.72,90.02 - 90.73,88.56 - 90.43
+Val Accuracy Mean (%),89.41,88.30,88.27
+Val Accuracy Std (%),0.09,0.24,1.04
+Avg Evaluations,15.0 ± 0.0,30.0 ± 0.0,15.0 ± 0.0
+Number of Runs,3,3,3

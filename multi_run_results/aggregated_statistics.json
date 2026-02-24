@@ -65,21 +65,87 @@
       "weight_decay": 5.9458620536076536e-05
     }
   },
+  "bo": {
+    "test_accuracy": {
+      "mean": 89.64999999999999,
+      "std": 0.7942711543715202,
+      "min": 88.56,
+      "max": 90.43,
+      "all_values": [
+        88.56,
+        90.43,
+        89.96
+      ]
+    },
+    "val_accuracy": {
+      "mean": 88.27333333333333,
+      "std": 1.037475568654775,
+      "min": 86.98,
+      "max": 89.52
+    },
+    "n_evaluations": {
+      "mean": 15.0,
+      "std": 0.0
+    },
+    "n_runs": 3,
+    "avg_best_config": {
+      "learning_rate": 0.0017293982214841063,
+      "batch_size": 73.66666666666667,
+      "conv_channels_base": 75.66666666666667,
+      "num_conv_blocks": 4.0,
+      "fc_hidden": 372.6666666666667,
+      "dropout": 0.16531264020381234,
+      "weight_decay": 6.72260374974506e-05
+    }
+  },
   "statistical_tests": {
-    "wilcoxon": {
-      "statistic": 1.0,
-      "p_value": 0.5,
-      "significant": false,
-      "test_type": "paired"
+    "random_search_vs_pso": {
+      "wilcoxon": {
+        "statistic": 1.0,
+        "p_value": 0.5,
+        "significant": false
+      },
+      "ttest": {
+        "statistic": 1.8477320654136682,
+        "p_value": 0.20589979861649954,
+        "significant": false
+      },
+      "effect_size": {
+        "cohens_d": 1.2115196524601253,
+        "interpretation": "large"
+      }
     },
-    "ttest_paired": {
-      "statistic": 1.8477320654136682,
-      "p_value": 0.20589979861649954,
-      "significant": false
+    "bo_vs_random_search": {
+      "wilcoxon": {
+        "statistic": 0.0,
+        "p_value": 0.25,
+        "significant": false
+      },
+      "ttest": {
+        "statistic": -1.6175861598429426,
+        "p_value": 0.2471525129969021,
+        "significant": false
+      },
+      "effect_size": {
+        "cohens_d": -1.7365564340573223,
+        "interpretation": "large"
+      }
     },
-    "effect_size": {
-      "cohens_d": 1.2115196524601253,
-      "interpretation": "large"
+    "bo_vs_pso": {
+      "wilcoxon": {
+        "statistic": 1.0,
+        "p_value": 0.5,
+        "significant": false
+      },
+      "ttest": {
+        "statistic": -1.1277105705447186,
+        "p_value": 0.37653963695041215,
+        "significant": false
+      },
+      "effect_size": {
+        "cohens_d": -1.2042446376601113,
+        "interpretation": "large"
+      }
     }
   }
 }
