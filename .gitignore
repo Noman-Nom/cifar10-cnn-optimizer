@@ -43,6 +43,13 @@ experiments/experiments/
 
 resultss/
 
+# Results - Track the folder structure but exclude .pth files
+results/
+!results/
+results/**/
+!results/**/
+results/**/*.pth
+
 # But track .pth files inside experiments/results
 !experiments/results/**/*.pth
 

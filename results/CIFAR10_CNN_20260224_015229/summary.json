@@ -1,0 +1,46 @@
+{
+  "random_search": {
+    "test_accuracies": [],
+    "best_configs": []
+  },
+  "bo": {
+    "test_accuracies": [
+      88.56,
+      90.43,
+      89.96
+    ],
+    "best_configs": [
+      {
+        "learning_rate": 0.0032813398465851946,
+        "batch_size": 77,
+        "conv_channels_base": 39,
+        "num_conv_blocks": 4,
+        "fc_hidden": 303,
+        "dropout": 0.10810595115924204,
+        "weight_decay": 5.1879748275512816e-05
+      },
+      {
+        "learning_rate": 0.0013830289091993717,
+        "batch_size": 34,
+        "conv_channels_base": 113,
+        "num_conv_blocks": 4,
+        "fc_hidden": 508,
+        "dropout": 0.2776599558375799,
+        "weight_decay": 1.102208921747745e-05
+      },
+      {
+        "learning_rate": 0.0005238259086677524,
+        "batch_size": 110,
+        "conv_channels_base": 75,
+        "num_conv_blocks": 4,
+        "fc_hidden": 307,
+        "dropout": 0.11017201361461512,
+        "weight_decay": 0.00013877627499936154
+      }
+    ]
+  },
+  "pso": {
+    "test_accuracies": [],
+    "best_configs": []
+  }
+}
