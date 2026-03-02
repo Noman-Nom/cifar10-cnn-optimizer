@@ -28,17 +28,19 @@ ENV/
 # Conda
 .conda/
 
-# Data
-data/
+# Data: ignore downloaded CIFAR-10 files but keep package source
+data/*
+!data/__init__.py
+!data/loaders.py
 
 # Model files - Ignore .pth files everywhere
 *.pth
 *.pt
 *.ckpt
 
-# Completely ignore ALL experiments folders and subfolders
-experiments/
-experiments/**/
+# Experiments: ignore results subdirs but keep source files
+experiments/results/
+experiments/**/__pycache__//
 
 # But keep the main results folder structure (excluding .pth)
 results/
