@@ -31,27 +31,21 @@ ENV/
 # Data
 data/
 
-# Model files - Uncomment if you want to track specific .pth files
-# !**/*.pth
-# *.pth
+# Model files - Ignore .pth files everywhere
+*.pth
 *.pt
 *.ckpt
 
-# Results - Ignore everything inside experiments/results except .pth files
-# Results directories - Track structure but not .pth files
-# experiments/results/
-# !experiments/results/
-# experiments/results/**/
-# !experiments/results/**/
-# experiments/results/**/*.pth
+# Completely ignore ALL experiments folders and subfolders
+experiments/
+experiments/**/
 
+# But keep the main results folder structure (excluding .pth)
 results/
 !results/
 results/**/
 !results/**/
 results/**/*.pth
-# But track .pth files inside experiments/results
-!experiments/results/**/*.pth
 
 # Jupyter
 .ipynb_checkpoints/
