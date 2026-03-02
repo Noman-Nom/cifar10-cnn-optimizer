@@ -40,7 +40,7 @@ data/
 # Results - Ignore everything inside experiments/results except .pth files
 experiments/results/
 experiments/experiments/
-results/
+
 resultss/
 
 # But track .pth files inside experiments/results
