@@ -38,18 +38,18 @@ data/
 *.ckpt
 
 # Results - Ignore everything inside experiments/results except .pth files
-experiments/results/
-experiments/experiments/
+# Results directories - Track structure but not .pth files
+# experiments/results/
+# !experiments/results/
+# experiments/results/**/
+# !experiments/results/**/
+# experiments/results/**/*.pth
 
-resultss/
-
-# Results - Track the folder structure but exclude .pth files
 results/
 !results/
 results/**/
 !results/**/
 results/**/*.pth
-
 # But track .pth files inside experiments/results
 !experiments/results/**/*.pth
 

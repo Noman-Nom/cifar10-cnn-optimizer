@@ -1,0 +1,34 @@
+{
+  "random_search": {
+    "test_accuracies": [
+      90.58
+    ],
+    "best_configs": [
+      {
+        "learning_rate": 0.00039987928942942635,
+        "batch_size": 53,
+        "conv_channels_base": 116,
+        "num_conv_blocks": 4,
+        "fc_hidden": 370,
+        "dropout": 0.3267538637998689,
+        "weight_decay": 0.00012414572254600123
+      }
+    ]
+  },
+  "pso": {
+    "test_accuracies": [
+      90.52
+    ],
+    "best_configs": [
+      {
+        "learning_rate": 0.0007329028567445335,
+        "batch_size": 32,
+        "conv_channels_base": 82,
+        "num_conv_blocks": 4,
+        "fc_hidden": 512,
+        "dropout": 0.3744199331025929,
+        "weight_decay": 4.497806297140506e-05
+      }
+    ]
+  }
+}
