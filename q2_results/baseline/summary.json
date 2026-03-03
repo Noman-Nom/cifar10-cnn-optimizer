@@ -1,0 +1,36 @@
+{
+  "test_accuracies": [
+    84.34,
+    83.14,
+    83.74,
+    82.62,
+    83.45,
+    83.63,
+    83.26,
+    83.92,
+    82.31,
+    84.23
+  ],
+  "mean": 83.46400000000001,
+  "seeds": [
+    42,
+    123,
+    999,
+    7,
+    13,
+    21,
+    77,
+    101,
+    256,
+    512
+  ],
+  "config": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "conv_channels_base": 64,
+    "num_conv_blocks": 2,
+    "fc_hidden": 256,
+    "dropout": 0.5,
+    "weight_decay": 0.0001
+  }
+}

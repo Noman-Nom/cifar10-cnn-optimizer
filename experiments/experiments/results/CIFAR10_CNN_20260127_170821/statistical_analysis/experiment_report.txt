@@ -1,0 +1,32 @@
+
+HYPERPARAMETER OPTIMIZATION EXPERIMENT REPORT
+=============================================
+
+Date: 2026-01-27
+Dataset: CIFAR-10
+Model: ModernCNN
+
+RESULTS SUMMARY
+---------------
+Random Search:
+  - Exploration Score: 89.42%
+  - Final Test Accuracy: 90.58%
+  - Total Trials: 15
+
+PSO:
+  - Exploration Score: 88.76%
+  - Final Test Accuracy: 90.52%
+  - Total Evaluations: 30
+
+WINNER: Random Search (by 0.06%)
+
+TOP 3 IMPORTANT HYPERPARAMETERS:
+  1. num_conv_blocks
+  2. weight_decay
+  3. batch_size
+
+RECOMMENDATIONS:
+- Use num_conv_blocks=4 (maximum depth)
+- Keep batch_size small (32-64)
+- Use moderate dropout (0.3-0.4)
+- Learning rate around 0.0005
