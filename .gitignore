@@ -23,6 +23,17 @@ wheels/
 experiments/data/
 experiments/**/data/
 # Virtual environments
+
+
+# Data - ignore all data files and folders
+data/
+*.tar.gz
+*.gz
+*.zip
+*.rar
+*.7z
+
+
 venv/
 env/
 ENV/
