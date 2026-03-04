@@ -24,45 +24,25 @@ wheels/
 venv/
 env/
 ENV/
-.venv/
 
 # Conda
 .conda/
-miniconda/
-anaconda/
 
-# Data - ignore ALL data files and folders everywhere
-**/data/
-**/*.tar.gz
-**/*.gz
-**/*.zip
-**/*.rar
-**/*.7z
-**/*.xz
-**/*.bz2
-data/
-*.tar.gz
-*.gz
-*.zip
-*.rar
-*.7z
+# Data: ignore downloaded CIFAR-10 files but keep package source
+data/*
+!data/__init__.py
+!data/loaders.py
 
-# Model files - ignore everywhere
-**/*.pth
-**/*.pt
-**/*.ckpt
-**/*.bin
-**/*.h5
+# Model files - Ignore .pth files everywhere
 *.pth
 *.pt
 *.ckpt
 
-# Experiments - ignore completely (you said to remove experiments folder)
-experiments/
-experiments/data
-**/experiments/
+# Experiments: ignore results subdirs but keep source files
+experiments/results/
+experiments/**/__pycache__//
 
-# Results - keep only the main results folder (without .pth files)
+# But keep the main results folder structure (excluding .pth)
 results/
 !results/
 results/**/
@@ -83,16 +63,13 @@ results/**/*.pth
 # OS
 .DS_Store
 Thumbs.db
-desktop.ini
 
 # Logs
 *.log
-logs/
 
 # Temporary files
 *.tmp
 *.temp
-*.cache
-*.pid
-*.seed
-*.pid.lock
+
+
+experiments/data/cifar-10-python.tar.gz
