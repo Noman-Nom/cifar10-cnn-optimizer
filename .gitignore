@@ -19,7 +19,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
+# Also specifically ignore the experiments data
+experiments/data/
+experiments/**/data/
 # Virtual environments
 venv/
 env/
