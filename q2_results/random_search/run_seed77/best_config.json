@@ -1,0 +1,9 @@
+{
+  "learning_rate": 0.00048334199963956875,
+  "batch_size": 118,
+  "conv_channels_base": 80,
+  "num_conv_blocks": 4,
+  "fc_hidden": 489,
+  "dropout": 0.4494970997055622,
+  "weight_decay": 8.93589892398681e-05
+}
