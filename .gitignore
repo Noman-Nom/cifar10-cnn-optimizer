@@ -59,6 +59,7 @@ data/
 
 # Experiments - ignore completely (you said to remove experiments folder)
 experiments/
+experiments/data
 **/experiments/
 
 # Results - keep only the main results folder (without .pth files)
