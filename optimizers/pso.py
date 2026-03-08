@@ -36,6 +36,9 @@ class ParticleSwarmOptimizer(BaseOptimizer):
         self.personal_best_scores = []
         self.global_best_position = None
         self.global_best_score = -np.inf
+        self.swarm_convergence = []  # global_best_score recorded at end of each iteration
+        self.v_max = 0.2            # maximum absolute velocity per dimension
+        self.boundary_damping = -0.5  # velocity damping factor on boundary reflection
         
         self._initialize_particles()
     
@@ -179,14 +182,26 @@ class ParticleSwarmOptimizer(BaseOptimizer):
                     self.w * self.velocities[particle_idx] + cognitive + social
                 )
                 
-                # Position update
+                # Clamp velocity to [-v_max, v_max] to prevent explosion
+                self.velocities[particle_idx] = np.clip(self.velocities[particle_idx], -self.v_max, self.v_max)
+
+                # Update position
                 self.particles[particle_idx] += self.velocities[particle_idx]
-                
-                # Clip to [0, 1] bounds
-                self.particles[particle_idx] = np.clip(self.particles[particle_idx], 0.0, 1.0)
+
+                # Reflect at boundaries instead of hard-clamp
+                for d in range(len(self.particles[particle_idx])):
+                    if self.particles[particle_idx][d] < 0.0:
+                        self.particles[particle_idx][d] = abs(self.particles[particle_idx][d])
+                        self.velocities[particle_idx][d] *= self.boundary_damping  # dampen and reflect
+                    elif self.particles[particle_idx][d] > 1.0:
+                        self.particles[particle_idx][d] = 2.0 - self.particles[particle_idx][d]
+                        self.velocities[particle_idx][d] *= self.boundary_damping  # dampen and reflect
+                    # Final safety clip
+                    self.particles[particle_idx][d] = np.clip(self.particles[particle_idx][d], 0.0, 1.0)
             
             print(f"  Global Best Score: {self.global_best_score:.4f}%")
             print(f"  Global Best Config: {self.best_config}")
+            self.swarm_convergence.append(float(self.global_best_score))
         
         print(f"\n{'='*60}")
         print(f"PSO Complete")
