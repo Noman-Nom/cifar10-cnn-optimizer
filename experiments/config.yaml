@@ -49,17 +49,22 @@ training:
 
 optimizers:
   random_search:
-    enabled: true
+    enabled: false       # RS is done, disable to avoid re-running
     n_iterations: 15
   pso:
-    enabled: false
+    enabled: true        # enable PSO
+    population_size: 10
+    n_iterations: 3
+    w: 0.7
+    c1: 1.5
+    c2: 1.5
   bo:
     enabled: false
   hyperband:
     enabled: false
 
 baseline:
-  enabled: true
+  enabled: false         # baseline is done, skip it
   config:
     learning_rate: 0.001
     batch_size: 64
